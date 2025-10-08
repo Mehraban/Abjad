@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="محاسبه‌گر حرف‌شناسی عددی - ابجد، گماتریا، ایزوپسفی">
+    <meta name="theme-color" content="#6366f1">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <title>محاسبه‌گر ابجد | Abjad Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- آیکون‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- نوار بالا -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <span data-i18n="app.title">محاسبه‌گر ابجد</span>
+                </h1>
+                <div class="header-actions">
+                    <!-- انتخاب زبان رابط کاربری -->
+                    <select id="uiLanguage" class="select-minimal" aria-label="زبان رابط کاربری">
+                        <option value="fa">🇮🇷 فارسی</option>
+                        <option value="ar">🇸🇦 العربية</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="he">🇮🇱 עברית</option>
+                    </select>
+                    
+                    <!-- تم -->
+                    <button id="themeToggle" class="btn-icon" aria-label="تغییر تم">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <!-- تنظیمات -->
+                    <button id="settingsBtn" class="btn-icon" aria-label="تنظیمات">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- محتوای اصلی -->
+        <main class="main">
+            <div class="container">
+                <!-- کارت ورودی -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 data-i18n="input.title">ورود متن</h2>
+                        <div class="input-options">
+                            <!-- انتخاب زبان محاسبه -->
+                            <select id="calcLanguage" class="select-primary">
+                                <option value="fa">محاسبه فارسی (ابجد)</option>
+                                <option value="ar">محاسبه عربی (حساب الجُمَّل)</option>
+                                <option value="en">محاسبه انگلیسی (English Gematria)</option>
+                                <option value="he">محاسبه عبری (גימטריה)</option>
+                                <option value="custom">الگوی سفارشی</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- ناحیه ورود متن -->
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="textInput" 
+                                class="text-input"
+                                placeholder="متن خود را اینجا وارد کنید..."
+                                rows="4"
+                                data-i18n-placeholder="input.placeholder"
+                            ></textarea>
+                            <div class="input-tools">
+                                <button id="clearBtn" class="btn-text">
+                                    <i class="fas fa-eraser"></i> پاک کردن
+                                </button>
+                                <button id="pasteBtn" class="btn-text">
+                                    <i class="fas fa-paste"></i> چسباندن
+                                </button>
+                                <button id="keyboardBtn" class="btn-text">
+                                    <i class="fas fa-keyboard"></i> صفحه‌کلید
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- دکمه محاسبه -->
+                        <button id="calculateBtn" class="btn-primary">
+                            <i class="fas fa-calculator"></i>
+                            <span data-i18n="button.calculate">محاسبه کن</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- کارت نتایج -->
+                <div id="resultsCard" class="card hidden">
+                    <div class="card-header">
+                        <h2 data-i18n="results.title">نتایج محاسبه</h2>
+                        <div class="result-actions">
+                            <button id="saveBtn" class="btn-text">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button id="shareBtn" class="btn-text">
+                                <i class="fas fa-share"></i>
+                            </button>
+                            <button id="exportBtn" class="btn-text">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- نمایش مجموع -->
+                        <div class="result-summary">
+                            <div class="total-value">
+                                <span class="label">مجموع:</span>
+                                <span id="totalValue" class="value">0</span>
+                            </div>
+                            <div class="result-meta">
+                                <span id="wordCount"></span>
+                                <span id="charCount"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- جدول تفکیکی -->
+                        <div class="result-details">
+                            <table id="detailsTable" class="details-table">
+                                <thead>
+                                    <tr>
+                                        <th>حرف</th>
+                                        <th>مقدار</th>
+                                        <th>تکرار</th>
+                                        <th>مجموع</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- نمودار -->
+                        <div class="chart-container">
+                            <canvas id="resultChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تاریخچه -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 data-i18n="history.title">تاریخچه</h2>
+                        <button id="clearHistoryBtn" class="btn-text">
+                            <i class="fas fa-trash"></i> پاک کردن
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="historyList" class="history-list"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- مودال تنظیمات -->
+        <div id="settingsModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>تنظیمات</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- تنظیمات الگوی سفارشی -->
+                    <div class="settings-section">
+                        <h4>الگوی محاسبه سفارشی</h4>
+                        <div id="customPatternEditor"></div>
+                        <button id="savePatternBtn" class="btn-secondary">
+                            ذخیره الگو
+                        </button>
+                    </div>
+                    
+                    <!-- تنظیمات نمایش -->
+                    <div class="settings-section">
+                        <h4>تنظیمات نمایش</h4>
+                        <label class="checkbox">
+                            <input type="checkbox" id="showChart" checked>
+                            <span>نمایش نمودار</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" id="showDetails" checked>
+                            <span>نمایش جزئیات</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- کیبورد مجازی -->
+        <div id="virtualKeyboard" class="keyboard hidden"></div>
+    </div>
+
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- اسکریپت اصلی -->
+    <script src="script.js"></script>
+</body>
+</html>
